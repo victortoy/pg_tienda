@@ -13,12 +13,18 @@ class database{
             exit;
         }
         $resultado = $mysqli->query($sql);
-        if($resultado == TRUE){
+        if($resultado === TRUE){
             $respuesta['ejecuto'] = true;
+        }else if(is_object($resultado)){
+            $respuesta['ejecuto'] = true;
+            $respuesta['registros'] = [];
+            while($fila = $resultado->fetch_assoc()){
+                $respuesta['registros'][] = $fila;
+            }
         }else{
             $respuesta['ejecuto'] = false;
             $respuesta['mensajeError'] = $mysqli->error;
         }
-        return $respuesta;        
+        return $respuesta;
     }
 }

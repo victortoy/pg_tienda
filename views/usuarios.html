@@ -25,7 +25,7 @@
                             <th>Teléfono</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="contenido"></tbody>
                 </table>
             </div>
         </div>
@@ -73,10 +73,19 @@
                 $('#modalUsuarios').modal('show')
             })
 
+            //Cargar datos existentes
+            enviarPeticion('usuarios', 'select', {prueba: 1}, function(resp){
+                for(let i = 0; i < resp.registros.length; i++){
+                    $('#contenido').append('<tr><td>'+resp.registros[i].id+'</td><td>'+resp.registros[i].nombre+'</td></tr>')
+                }
+            })
+
             $('#formularioUsuarios').on('submit', function(event){
                 event.preventDefault();
                 let datos = parsearFormulario($(this))
-                enviarPeticion('usuarios', 'insert', datos)
+                enviarPeticion('usuarios', 'insert', datos, function(r){
+                    alert('Se guardo correctamente')
+                })
             })
         })
     </script>

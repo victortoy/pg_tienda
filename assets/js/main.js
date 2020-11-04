@@ -1,4 +1,4 @@
-function enviarPeticion(objeto, metodo, datos){
+function enviarPeticion(objeto, metodo, datos, callback){
     $.ajax({
         url: "../libs/frontController.php",        
         type: "POST",  
@@ -9,7 +9,7 @@ function enviarPeticion(objeto, metodo, datos){
             datos: datos
         },        
         success: function(respuesta){
-            console.log(respuesta)
+            callback(respuesta)
         }
     })
 }

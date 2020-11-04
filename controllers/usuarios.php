@@ -13,6 +13,8 @@ class usuarios{
     }
 
     public function select($datos){
-
+        $sql = "SELECT * FROM usuarios";
+        $db = new database();
+        return $db->consulta($sql);
     }
 }
