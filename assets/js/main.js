@@ -9,7 +9,11 @@ function enviarPeticion(objeto, metodo, datos, callback){
             datos: datos
         },        
         success: function(respuesta){
-            callback(respuesta)
+            if(respuesta.ejecuto){
+                callback(respuesta)
+            }else{
+                console.error(respuesta.mensajeError)
+            }
         }
     })
 }

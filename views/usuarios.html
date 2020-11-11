@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>Usuarios</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
 </head>
 <body>
     <div class="container mt-3">
         <div class="row">
             <div class="col-4 col-md-3 col-lg-2"><h1>Usuarios</h1></div>
             <div class="col-8 col-md-9 col-lg-10">
-                <button type="button" class="btn btn-primary" id="nuevoUsuarios">Nuevo</button>
+                <button type="button" class="btn btn-primary" id="nuevoUsuarios"><i class="fas fa-plus"></i></button>
             </div>
         </div>
         <div class="row">
@@ -23,6 +24,7 @@
                             <th>Nombre</th>
                             <th>Correo</th>
                             <th>Teléfono</th>
+                            <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody id="contenido"></tbody>
@@ -68,26 +70,64 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="../assets/js/main.js"></script>
     <script>
+        var accion = 'guardar'
+        var id = 0
         $(function(){
             $('#nuevoUsuarios').on('click', function(){
+                accion = 'guardar'
                 $('#modalUsuarios').modal('show')
             })
 
             //Cargar datos existentes
-            enviarPeticion('usuarios', 'select', {prueba: 1}, function(resp){
+            enviarPeticion('usuarios', 'select', {1:1}, function(resp){
                 for(let i = 0; i < resp.registros.length; i++){
-                    $('#contenido').append('<tr><td>'+resp.registros[i].id+'</td><td>'+resp.registros[i].nombre+'</td></tr>')
+                    $('#contenido').append(`<tr>
+                                                <td>${resp.registros[i].id}</td>
+                                                <td>${resp.registros[i].nombre}</td>
+                                                <td>${resp.registros[i].correo}</td>
+                                                <td>${resp.registros[i].telefono}</td>
+                                                <td><button class="btn btn-secondary" onClick="editar(${resp.registros[i].id})"><i class="fas fa-edit"></i></button> <button class="btn btn-danger" onClick="borrar(${resp.registros[i].id})"><i class="fas fa-trash-alt"></i></button></td>
+                                            </tr>`)
                 }
             })
 
             $('#formularioUsuarios').on('submit', function(event){
                 event.preventDefault();
                 let datos = parsearFormulario($(this))
-                enviarPeticion('usuarios', 'insert', datos, function(r){
-                    alert('Se guardo correctamente')
-                })
+                if(accion == 'guardar'){
+                    enviarPeticion('usuarios', 'insert', datos, function(resp){
+                        alert('Se guardo correctamente')
+                        location.reload()
+                    })
+                }else{
+                    datos.id = id
+                    enviarPeticion('usuarios', 'update', datos, function(resp){
+                        alert('Se actualizo correctamente')
+                        location.reload()
+                    })
+                }
             })
         })
+
+        function editar(codigo){
+            accion = 'actualizar'
+            id = codigo
+            $('#modalUsuarios').modal('show')
+            enviarPeticion('usuarios', 'select', {id: codigo}, function(resp){
+                $('input[name=nombre]').val(resp.registros[0].nombre)
+                $('input[name=correo]').val(resp.registros[0].correo)
+                $('input[name=telefono]').val(resp.registros[0].telefono)
+            })
+        }
+
+        function borrar(codigo){
+            if (confirm('Esta seguro de borrar?')) {
+                enviarPeticion('usuarios', 'delete', {id: codigo}, function(resp){
+                    alert('Se borro correctamente')
+                    location.reload()
+                })
+            }            
+        }
     </script>
   </body>
 </html>
