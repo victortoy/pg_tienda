@@ -1,5 +1,5 @@
 <?php
-require_once '../libs/database.php';
+require_once '../libs/model.php';
 
 class empresas{
     public function insert($datos){
@@ -38,5 +38,8 @@ class empresas{
         $sql = "DELETE FROM empresas WHERE id = ".$datos['id'];
         $db = new database();
         return $db->consulta($sql);   
+    	$sql = "SELECT COUNT(1) AS cantidad FROM empresas";
+    	$db = new database();
+    	return $db->consulta($sql);
     }
 }

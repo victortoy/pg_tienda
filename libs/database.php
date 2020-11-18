@@ -5,6 +5,40 @@ class database{
     private $USER = 'root';
     private $PASS = '';
 
+    public function select($tabla, $datos){
+        $sql = "SELECT * 
+                FROM $tabla
+                WHERE 1 ";
+        foreach ($datos as $key => $value) {
+            $sql .= "AND $key = '$value'";
+        }
+        return $this->consulta($sql);
+    }
+
+    public function insert($tabla, $datos){
+        $sql = "INSERT INTO $tabla SET ";
+        foreach($datos as $key => $value){
+            $sql .= "$key = '$value',";
+        }
+        $sql = rtrim($sql,',');
+        return $this->consulta($sql);
+    }    
+
+    public function update($tabla, $datos){
+        $sql = "UPDATE $tabla SET ";
+        foreach ($datos as $key => $value) {
+            $sql .= "$key = '$value',";
+        }
+        $sql = rtrim($sql,',');
+        $sql .= " WHERE id = ".$datos['id'];
+        return $this->consulta($sql);
+    }
+
+    public function delete($tabla, $datos){
+        $sql = "DELETE FROM empresas WHERE id = ".$datos['id'];
+        return $this->consulta($sql);
+    }
+
     public function consulta($sql){
         $respuesta = [];
         $mysqli = new mysqli($this->HOST, $this->USER, $this->PASS, $this->DB);

@@ -15,20 +15,7 @@
                 <button type="button" class="btn btn-primary" id="nuevoEmpresas"><i class="fas fa-plus"></i></button>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>                            
-                            <th>Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="contenido"></tbody>
-                </table>
-            </div>
-        </div>
+        <div class="row" id="contenido"></div>
     </div>
 
     <div class="modal" tabindex="-1" id="modalEmpresas">
@@ -71,6 +58,10 @@
             //Cargar datos existentes
             cargarRegistros({1:1}, 'crear')
 
+            enviarPeticion('empresas', 'prueba', {1:1}, function(resp){
+            	console.log(resp)
+            })
+
             $('#formularioEmpresas').on('submit', function(event){
                 event.preventDefault();
                 let datos = parsearFormulario($(this))
@@ -93,11 +84,26 @@
             let fila = ''
             enviarPeticion('empresas', 'select', datos, function(resp){
                 for(let i = 0; i < resp.registros.length; i++){
-                    fila += `<tr id=${resp.registros[i].id}>
+                	fila += `<div class="col-4" id=${resp.registros[i].id}>
+	        					<div class="card">
+	  								<div class="card-header">	  									
+	    								${resp.registros[i].nombre}
+	    								<div class="float-right">
+	    									<button class="btn btn-link" onClick="editar(${resp.registros[i].id})"><i class="fas fa-edit"></i></button>		
+	    								</div>
+	  								</div>
+	  								<div class="card-body">
+	    								<h5 class="card-title">Special title treatment</h5>
+	    								<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+	    								<a href="#" class="btn btn-primary">Go somewhere</a>
+	  								</div>
+								</div>
+							</div>`
+                    /*fila += `<tr id=${resp.registros[i].id}>
                                 <td>${resp.registros[i].id}</td>
                                 <td>${resp.registros[i].nombre}</td>                                
                                 <td><button class="btn btn-secondary" onClick="editar(${resp.registros[i].id})"><i class="fas fa-edit"></i></button> <button class="btn btn-danger" onClick="borrar(${resp.registros[i].id})"><i class="fas fa-trash-alt"></i></button></td>
-                            </tr>`
+                            </tr>`*/
                 }
                 if(accion == 'crear'){
                     $('#contenido').append(fila)
