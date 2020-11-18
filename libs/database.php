@@ -15,6 +15,7 @@ class database{
             $resultado = $mysqli->query($sql);
             if($resultado === TRUE){
                 $respuesta['ejecuto'] = true;
+                $respuesta['ultimo_insertado'] = $mysqli->insert_id;
             }else if(is_object($resultado)){
                 $respuesta['ejecuto'] = true;
                 $respuesta['registros'] = [];

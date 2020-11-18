@@ -4,15 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>Usuarios</title>
+    <title>Empresas</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
 </head>
 <body>
     <div class="container mt-3">
         <div class="row">
-            <div class="col-4 col-md-3 col-lg-2"><h1>Usuarios</h1></div>
+            <div class="col-4 col-md-3 col-lg-2"><h1>Empresas</h1></div>
             <div class="col-8 col-md-9 col-lg-10">
-                <button type="button" class="btn btn-primary" id="nuevoUsuarios"><i class="fas fa-plus"></i></button>
+                <button type="button" class="btn btn-primary" id="nuevoEmpresas"><i class="fas fa-plus"></i></button>
             </div>
         </div>
         <div class="row">
@@ -21,9 +21,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Teléfono</th>
+                            <th>Nombre</th>                            
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -33,33 +31,25 @@
         </div>
     </div>
 
-    <div class="modal" tabindex="-1" id="modalUsuarios">
+    <div class="modal" tabindex="-1" id="modalEmpresas">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Nuevo usuario</h5>
+                    <h5 class="modal-title">Nuevo empresa</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="formularioUsuarios">
+                    <form id="formularioEmpresas">
                         <div class="form-group">
                             <label for="">Nombre</label>
                             <input type="text" class="form-control" name="nombre" required="required">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Correo</label>
-                            <input type="email" class="form-control" name="correo" required="required">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Teléfono</label>
-                            <input type="number" class="form-control" name="telefono" required="required">
                         </div>                        
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-secondary" form="formularioUsuarios">Guardar</button>
+                    <button type="submit" class="btn btn-secondary" form="formularioEmpresas">Guardar</button>
                 </div>
             </div>
         </div>
@@ -73,27 +63,27 @@
         var accion = 'guardar'
         var id = 0
         $(function(){
-            $('#nuevoUsuarios').on('click', function(){
+            $('#nuevoEmpresas').on('click', function(){
                 accion = 'guardar'
-                $('#modalUsuarios').modal('show')
+                $('#modalEmpresas').modal('show')
             })
 
             //Cargar datos existentes
             cargarRegistros({1:1}, 'crear')
 
-            $('#formularioUsuarios').on('submit', function(event){
+            $('#formularioEmpresas').on('submit', function(event){
                 event.preventDefault();
                 let datos = parsearFormulario($(this))
                 if(accion == 'guardar'){
-                    enviarPeticion('usuarios', 'insert', datos, function(resp){
+                    enviarPeticion('empresas', 'insert', datos, function(resp){
                         cargarRegistros({id:resp.ultimo_insertado}, 'crear')
-                        $('#modalUsuarios').modal('hide')
+                        $('#modalEmpresas').modal('hide')
                     })
                 }else{
                     datos.id = id
-                    enviarPeticion('usuarios', 'update', datos, function(resp){
+                    enviarPeticion('empresas', 'update', datos, function(resp){
                         cargarRegistros({id: id}, 'actualizar')
-                        $('#modalUsuarios').modal('hide')
+                        $('#modalEmpresas').modal('hide')
                     })
                 }
             })
@@ -101,13 +91,11 @@
 
         function cargarRegistros(datos, accion){
             let fila = ''
-            enviarPeticion('usuarios', 'select', datos, function(resp){
+            enviarPeticion('empresas', 'select', datos, function(resp){
                 for(let i = 0; i < resp.registros.length; i++){
                     fila += `<tr id=${resp.registros[i].id}>
                                 <td>${resp.registros[i].id}</td>
-                                <td>${resp.registros[i].nombre}</td>
-                                <td>${resp.registros[i].correo}</td>
-                                <td>${resp.registros[i].telefono}</td>
+                                <td>${resp.registros[i].nombre}</td>                                
                                 <td><button class="btn btn-secondary" onClick="editar(${resp.registros[i].id})"><i class="fas fa-edit"></i></button> <button class="btn btn-danger" onClick="borrar(${resp.registros[i].id})"><i class="fas fa-trash-alt"></i></button></td>
                             </tr>`
                 }
@@ -122,17 +110,15 @@
         function editar(codigo){
             accion = 'actualizar'
             id = codigo
-            $('#modalUsuarios').modal('show')
-            enviarPeticion('usuarios', 'select', {id: codigo}, function(resp){
+            $('#modalEmpresas').modal('show')
+            enviarPeticion('empresas', 'select', {id: codigo}, function(resp){
                 $('input[name=nombre]').val(resp.registros[0].nombre)
-                $('input[name=correo]').val(resp.registros[0].correo)
-                $('input[name=telefono]').val(resp.registros[0].telefono)
             })
         }
 
         function borrar(codigo){
             if (confirm('Esta seguro de borrar?')) {
-                enviarPeticion('usuarios', 'delete', {id: codigo}, function(resp){
+                enviarPeticion('empresas', 'delete', {id: codigo}, function(resp){
                     $('#'+codigo).hide('slow')
                 })
             }            
