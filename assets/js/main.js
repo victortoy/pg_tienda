@@ -12,7 +12,7 @@ function enviarPeticion(objeto, metodo, datos, callback){
             if(respuesta.ejecuto){
                 callback(respuesta)
             }else{
-                console.error(respuesta.mensajeError)
+                alert(respuesta.mensajeError)
             }
         }
     })
